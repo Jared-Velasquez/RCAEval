@@ -391,7 +391,7 @@ for service in services:
                     else []
                 )
 
-                f_ranks = [Node(x.split("_")[0], x.split("_")[1]) for x in ranks]
+                f_ranks = [Node(x.split("_")[0], x.split("_")[1] if "_" in x else "unknown") for x in ranks]
 
                 s_evaluator.add_case(ranks=s_ranks, answer=Node(service, "unknown"))
                 f_evaluator.add_case(ranks=f_ranks, answer=Node(service, fault))
