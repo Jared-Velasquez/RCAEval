@@ -13,7 +13,7 @@ import tempfile
 
 
 def test_rq2_script():
-    command = ["python", "main-ase.py", "--method", "baro", "--dataset", "online-boutique", "--test"]
+    command = ["python", "main.py", "--method", "baro", "--dataset", "online-boutique", "--test"]
     result = subprocess.run(command, capture_output=True, text=True)
 
     # Check if the script ran successfully
