@@ -57,9 +57,11 @@ if is_py310() or is_py312():
     from .run import run
     from .mscred import mscred
     from .tracerca import tracerca
+    from .torai import torai
 else:
     from .rcd import rcd
     from .mmrcd import mmrcd
+    from .torai import torai
 
 
 def dummy(data, inject_time=None, dataset=None, *args, **kwargs):
