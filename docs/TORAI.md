@@ -12,6 +12,17 @@ TORAI is a multi-modal RCA method that combines metrics, logs, and traces to ide
     + [Train Ticket](#train-ticket)
   * [Data Format](#data-format)
 
+## Dataset
+
+The TORAI datasets are available on Figshare: [https://doi.org/10.6084/m9.figshare.31925976](https://doi.org/10.6084/m9.figshare.31925976)
+
+Download and extract the data:
+
+```bash
+wget -O torai-data.zip "https://figshare.com/ndownloader/articles/31925976/versions/1"
+unzip torai-data.zip -d data/
+```
+
 ## Installation
 
 TORAI uses Python 3.8 and a patched version of `causal-learn` (for RCD's localized PC algorithm).

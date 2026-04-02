@@ -160,12 +160,17 @@ RCAEval benchmark includes nine datasets organized into three benchmark suites (
 | RE3-OB | Online Boutique | 30 | f1, f2, f3, f4, f5 | 68-101 | Yes | Yes |
 | RE3-SS | Sock Shop | 30 | f1, f2, f3, f4, f5 | 80-107 | Yes | N/A |
 | RE3-TT | Train Ticket | 30 | f1, f2, f3, f4, f5 | 294-322 | Yes | Yes |
+| TORAI-OB | Online Boutique | 90 | cpu, mem, disk, delay, loss, socket | 69-77 | Yes | Yes |
+| TORAI-SS | Sock Shop | 90 | cpu, mem, disk, delay, loss, socket | 74-82 | Yes | N/A |
+| TORAI-TT | Train Ticket | 90 | cpu, mem, disk, delay, loss, socket | 340-376 | Yes | Yes |
 
 **RE1 Datasets (375 cases):** Metric-only data supporting metric-based RCA methods. Five fault types (CPU, MEM, DISK, DELAY, LOSS) across five services per system, with five repetitions per fault-service pair.
 
 **RE2 Datasets (270 cases):** Multi-source data (metrics, logs, traces) supporting multi-source RCA methods. Six fault types (adds SOCKET) across five services per system, with three repetitions per fault-service pair.
 
 **RE3 Datasets (90 cases):** Multi-source data focusing on code-level faults (F1-F5). Supports diagnosing code-level faults through telemetry data, e.g., leveraging stack traces in logs or response codes in traces.
+
+**TORAI Datasets (270 cases):** Multi-source data (metrics, log time-series, trace time-series) for the TORAI method. Available on Figshare: [https://doi.org/10.6084/m9.figshare.31925976](https://doi.org/10.6084/m9.figshare.31925976). See [docs/TORAI.md](docs/TORAI.md) for installation and reproducibility instructions.
 
 ### File Structure
 
@@ -314,6 +319,28 @@ Avg speed: 0.07
 ```
 
 We can replace the baro method with other methods (e.g., nsigma, fci_randomwalk) and substitute online-boutique with other datasets to replicate the corresponding results shown in Table 5. This reproduction process is also integrated into our Continuous Integration (CI) setup. For more details, refer to the [.github/workflows/reproducibility.yml](.github/workflows/reproducibility.yml) file.
+
+### For TORAI Paper
+
+TORAI requires a separate Python 3.8 environment and its own datasets. For full setup instructions, see [docs/TORAI.md](docs/TORAI.md).
+
+```bash
+python main.py --method torai --dataset torai-ob --length 10
+```
+
+<details>
+<summary>Expected output (it takes less than 1 minute)</summary>
+
+```
+--- Evaluation results ---
+Avg@5-CPU:   0.96
+Avg@5-MEM:   0.93
+Avg@5-DISK:  1.0
+Avg@5-SOCKET: 0.93
+Avg@5-DELAY: 0.8
+Avg@5-LOSS:  0.84
+```
+</details>
 
 ## Creating New RCA Datasets or Methods
 
