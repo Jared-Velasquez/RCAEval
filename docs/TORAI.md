@@ -1,6 +1,6 @@
-# TORAI: Multi-Modal Root Cause Analysis
+# TORAI: Multi-Source Root Cause Analysis for Blind Spots in Microservice Service Call Graph
 
-TORAI is a multi-modal RCA method that combines metrics, logs, and traces to identify root cause services. It uses per-modality anomaly scoring, Gaussian Mixture Model clustering, and RCD-based within-cluster refinement.
+TORAI is a multi-source RCA method that combines metrics, logs, and traces to identify root cause services. It uses per-modality anomaly scoring, Gaussian Mixture Model clustering, and RCD-based within-cluster refinement.
 
 **Table of Contents**
 
