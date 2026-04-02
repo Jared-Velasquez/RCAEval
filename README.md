@@ -26,10 +26,8 @@ RCAEval is an open-source benchmark that offers nine datasets with 735 real fail
     + [Basic usage example](#basic-usage-example)
   * [Available Datasets](#available-datasets)
   * [Available Baselines](#available-baselines)
-  * [Reproducibility](#reproducibility)
-    + [RCAEval Benchmark Paper](#rcaeval-benchmark-paper)
-    + [For ASE Paper](#for-ase-paper)
-  * [Creating New RCA Datasets or Methods](#creating-new-rca-datasets-or-methods)
+  * [Benchmark](#benchmark)
+  * [For TORAI Paper](#for-torai-paper)
   * [Licensing](#licensing)
   * [Acknowledgments](#acknowledgments)
   * [Change Logs](#change-logs)
@@ -168,7 +166,6 @@ RCAEval benchmark includes nine datasets organized into three benchmark suites (
 
 **RE3 Datasets (90 cases):** Multi-source data focusing on code-level faults (F1-F5). Supports diagnosing code-level faults through telemetry data, e.g., leveraging stack traces in logs or response codes in traces.
 
-**TORAI Datasets (270 cases):** A processed version of the RE2 datasets, containing pre-aggregated time-series for metrics, logs, and traces (where available). These datasets are used by the TORAI method and are available separately on Figshare: [https://doi.org/10.6084/m9.figshare.31925976](https://doi.org/10.6084/m9.figshare.31925976). See [docs/TORAI.md](docs/TORAI.md) for installation and reproducibility instructions.
 
 ### File Structure
 
@@ -209,11 +206,9 @@ Downloading RE3.zip..: 100%|█████████████████�
 
 ## Available Baselines 
 
-RCAEval stores all the RCA methods in the `e2e` module (implemented in `RCAEval.e2e`). There are 15 RCA baselines available: RUN, CausalRCA, CIRCA, RCD, MicroCause, EasyRCA, MSCRED, BARO, 𝜖-Diagnosis, TraceRCA, MicroRank, PDiagnose, Multi-source BARO, Multi-source RCD, Multi-source CIRCA.
+RCAEval stores all the RCA methods in the `e2e` module (implemented in `RCAEval.e2e`). There are many RCA baselines available: RUN, CausalRCA, CIRCA, RCD, MicroCause, EasyRCA, MSCRED, BARO, 𝜖-Diagnosis, TraceRCA, MicroRank, PDiagnose, Multi-source BARO, Multi-source RCD, Multi-source CIRCA, TORAI.
 
-## Reproducibility
-
-### RCAEval Benchmark Paper
+## Benchmark 
 
 We provide a script named `main.py` to assist in reproducing the results from [our RCAEval paper](https://arxiv.org/pdf/2412.17015). This script can be executed using Python with the following syntax: 
 
@@ -256,71 +251,11 @@ Avg speed: 0.51
 We can replace the baro method with other methods (e.g., circa) and substitute re2-tt with other datasets to replicate the corresponding results shown in Table 6. This reproduction process is also integrated into our Continuous Integration (CI) setup. For more details, refer to the [.circleci/config.yml](.circleci/config.yml) file.
 
 
+## For TORAI Paper
 
-### For ASE Paper
-We provide a script named `main.py` to assist in reproducing the results from [our ASE paper](https://dl.acm.org/doi/abs/10.1145/3691620.3695065). This script can be executed using Python with the following syntax: 
+**TORAI Datasets (270 cases):** A processed version of the RE2 datasets, containing pre-aggregated time-series for metrics, logs, and traces (where available). These datasets are used by the TORAI method and are available separately on Figshare: [https://doi.org/10.6084/m9.figshare.31925976](https://doi.org/10.6084/m9.figshare.31925976). 
 
-```
-python main.py [-h] [--dataset DATASET] [--method METHOD] [--tdelta TDELTA] [--length LENGTH] [--test] 
-```
-
-The available options and their descriptions are as follows:
-
-```
-options:
-  -h, --help            Show this help message and exit
-  --dataset DATASET     Choose a dataset. Valid options:
-                        [online-boutique, sock-shop-1, sock-shop-2, train-ticket,
-                         circa10, circa50, rcd10, rcd50, causil10, causil50]
-  --method METHOD       Choose a method (`pc_pagerank`, `pc_randomwalk`, `fci_pagerank`, `fci_randomwalk`, `granger_pagerank`, `granger_randomwalk`, `lingam_pagerank`, `lingam_randomwalk`, `ntlr_pagerank`, `ntlr_randomwalk`, `causalrca`, `causalai`, `run`, `microcause`, `e_diagnosis`, `baro`, `rcd`, `nsigma`, and `circa`)
-  --tdelta TDELTA       Specify $t_delta$ to simulate delay in anomaly detection (e.g.`--tdelta 60`)
-  --length LENGTH       Specify the length of the time series (used for RQ4)
-  --test                Perform smoke test on certain methods without fully run
-```
-
-For example, in Table 5, BARO [ $t_\Delta = 0$ ] achieves Avg@5 of 0.97, 1, 0.91, 0.98, and 0.67 for CPU, MEM, DISK, DELAY, and LOSS fault types on the Online Boutique dataset. To reproduce these results, you can run the following commands:
-
-```bash
-python main.py --dataset online-boutique --method baro 
-```
-
-The expected output should be exactly as presented in the paper (it takes less than 1 minute to run the code)
-
-```
---- Evaluation results ---
-Avg@5-CPU:   0.97
-Avg@5-MEM:   1.0
-Avg@5-DISK:  0.91
-Avg@5-DELAY: 0.98
-Avg@5-LOSS:  0.67
----
-Avg speed: 0.07
-```
-
-As presented in Table 5, BARO [ $t_\Delta = 60$ ] achieves Avg@5 of 0.94, 0.99, 0.87, 0.99, and 0.6 for CPU, MEM, DISK, DELAY, and LOSS fault types on the Online Boutique dataset. To reproduce these results, you can run the following commands:
-
-```bash
-python main.py --dataset online-boutique --method baro --tdelta 60
-```
-
-The expected output should be exactly as presented in the paper (it takes less than 1 minute to run the code)
-
-```
---- Evaluation results ---
-Avg@5-CPU:   0.94
-Avg@5-MEM:   0.99
-Avg@5-DISK:  0.87
-Avg@5-DELAY: 0.99
-Avg@5-LOSS:  0.6
----
-Avg speed: 0.07
-```
-
-We can replace the baro method with other methods (e.g., nsigma, fci_randomwalk) and substitute online-boutique with other datasets to replicate the corresponding results shown in Table 5. This reproduction process is also integrated into our Continuous Integration (CI) setup. For more details, refer to the [.github/workflows/reproducibility.yml](.github/workflows/reproducibility.yml) file.
-
-### For TORAI Paper
-
-TORAI requires a separate Python 3.8 environment and its own datasets. For full setup instructions, see [docs/TORAI.md](docs/TORAI.md).
+TORAI requires a separate Python 3.8 environment and its own datasets. For full instructions, see [docs/TORAI.md](docs/TORAI.md) for installation and reproducibility instructions.
 
 ```bash
 python main.py --method torai --dataset torai-ob --length 10
@@ -340,9 +275,6 @@ Avg@5-LOSS:  0.84
 ```
 </details>
 
-## Creating New RCA Datasets or Methods
-
-For detailed guidance, refer to [EXTENDING.md](docs/EXTENDING.md).
 
 ## Licensing
 
@@ -363,6 +295,7 @@ This repository includes code from various sources with different licenses. We h
 We would like to express our sincere gratitude to the researchers and developers who created the baselines used in our study. Their work has been instrumental in making this project possible. We deeply appreciate the time, effort, and expertise that have gone into developing and maintaining these resources. This project would not have been feasible without their contributions.
 
 ## Change Logs
+- [Apr 2026] Added TORAI, a multi-source RCA method accepted at FSE'26.
 - [Mar 2025] The version of RCAEval used in our WWW'25 paper are available in the [www25 branch](https://github.com/phamquiluan/RCAEval/tree/www25).
 - [Dec 2024] The prior version of RCAEval used in our ASE'24 paper are available in the [ase24 branch](https://github.com/phamquiluan/RCAEval/tree/ase24).
 
