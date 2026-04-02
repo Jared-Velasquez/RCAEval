@@ -255,10 +255,10 @@ We can replace the baro method with other methods (e.g., circa) and substitute r
 
 
 ### For ASE Paper
-We provide a script named `main-ase.py` to assist in reproducing the results from [our ASE paper](https://dl.acm.org/doi/abs/10.1145/3691620.3695065). This script can be executed using Python with the following syntax: 
+We provide a script named `main.py` to assist in reproducing the results from [our ASE paper](https://dl.acm.org/doi/abs/10.1145/3691620.3695065). This script can be executed using Python with the following syntax: 
 
 ```
-python main-ase.py [-h] [--dataset DATASET] [--method METHOD] [--tdelta TDELTA] [--length LENGTH] [--test] 
+python main.py [-h] [--dataset DATASET] [--method METHOD] [--tdelta TDELTA] [--length LENGTH] [--test] 
 ```
 
 The available options and their descriptions are as follows:
@@ -278,7 +278,7 @@ options:
 For example, in Table 5, BARO [ $t_\Delta = 0$ ] achieves Avg@5 of 0.97, 1, 0.91, 0.98, and 0.67 for CPU, MEM, DISK, DELAY, and LOSS fault types on the Online Boutique dataset. To reproduce these results, you can run the following commands:
 
 ```bash
-python main-ase.py --dataset online-boutique --method baro 
+python main.py --dataset online-boutique --method baro 
 ```
 
 The expected output should be exactly as presented in the paper (it takes less than 1 minute to run the code)
@@ -297,7 +297,7 @@ Avg speed: 0.07
 As presented in Table 5, BARO [ $t_\Delta = 60$ ] achieves Avg@5 of 0.94, 0.99, 0.87, 0.99, and 0.6 for CPU, MEM, DISK, DELAY, and LOSS fault types on the Online Boutique dataset. To reproduce these results, you can run the following commands:
 
 ```bash
-python main-ase.py --dataset online-boutique --method baro --tdelta 60
+python main.py --dataset online-boutique --method baro --tdelta 60
 ```
 
 The expected output should be exactly as presented in the paper (it takes less than 1 minute to run the code)
