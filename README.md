@@ -14,8 +14,6 @@ RCAEval is an open-source benchmark that offers nine datasets with 735 real fail
 
 
 
-**_NOTE:_** The [main branch](https://github.com/phamquiluan/RCAEval/tree/main) is now under extensive development. Please refer to [CHANGE LOGS](https://github.com/phamquiluan/RCAEval/blob/main/README.md#change-logs) to find the code for our previous publications.
-
 <p align="center">
 <img width=1000 src= "./docs/readme.jpg"/>
 </p>
@@ -170,7 +168,7 @@ RCAEval benchmark includes nine datasets organized into three benchmark suites (
 
 **RE3 Datasets (90 cases):** Multi-source data focusing on code-level faults (F1-F5). Supports diagnosing code-level faults through telemetry data, e.g., leveraging stack traces in logs or response codes in traces.
 
-**TORAI Datasets (270 cases):** Multi-source data (metrics, log time-series, trace time-series) for the TORAI method. Available on Figshare: [https://doi.org/10.6084/m9.figshare.31925976](https://doi.org/10.6084/m9.figshare.31925976). See [docs/TORAI.md](docs/TORAI.md) for installation and reproducibility instructions.
+**TORAI Datasets (270 cases):** A processed version of the RE2 datasets, containing pre-aggregated time-series for metrics, logs, and traces (where available). These datasets are used by the TORAI method and are available separately on Figshare: [https://doi.org/10.6084/m9.figshare.31925976](https://doi.org/10.6084/m9.figshare.31925976). See [docs/TORAI.md](docs/TORAI.md) for installation and reproducibility instructions.
 
 ### File Structure
 
