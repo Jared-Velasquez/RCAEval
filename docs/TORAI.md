@@ -19,7 +19,7 @@ The TORAI datasets are available on Figshare: [https://doi.org/10.6084/m9.figsha
 Download and extract the data:
 
 ```bash
-wget -O torai-data.zip "https://figshare.com/ndownloader/articles/31925976/versions/1"
+wget -O torai-data.zip "https://ndownloader.figshare.com/files/63402423"
 unzip torai-data.zip -d data/
 ```
 
