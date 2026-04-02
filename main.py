@@ -64,11 +64,12 @@ if is_py312():
         pc_pagerank,
         pc_randomwalk,
         run,
+        torai,
         tracerca,
     )
 
 elif is_py38():
-    from RCAEval.e2e import dummy, e_diagnosis, ht, rcd, mmrcd
+    from RCAEval.e2e import dummy, e_diagnosis, ht, rcd, mmrcd, torai
 else:
     print("Please use Python 3.8 or 3.12")
     exit(1)
@@ -86,7 +87,8 @@ def parse_args():
     parser.add_argument("--method", type=str, help="Choose a method.")
     parser.add_argument("--dataset", type=str, help="Choose a dataset.", choices=[
         "online-boutique", "sock-shop-1", "sock-shop-2", "train-ticket",
-        "re1-ob", "re1-ss", "re1-tt", "re2-ob", "re2-ss", "re2-tt", "re3-ob", "re3-ss", "re3-tt"
+        "re1-ob", "re1-ss", "re1-tt", "re2-ob", "re2-ss", "re2-tt", "re3-ob", "re3-ss", "re3-tt",
+        "torai-ob", "torai-ss", "torai-tt",
     ])
     parser.add_argument("--length", type=int, default=20, help="Time series length (RQ4)")
     parser.add_argument("--tdelta", type=int, default=0, help="Specify $t_delta$ to simulate delay in anomaly detection")
@@ -118,6 +120,8 @@ elif "re2-tt" in args.dataset.lower():
     download_re2tt_dataset()
 elif "re3" in args.dataset:
     download_re3_dataset()
+elif "torai" in args.dataset:
+    pass  # torai data is expected to be local
 else:
     raise Exception(f"{args.dataset} is not defined!")
 
@@ -134,7 +138,10 @@ DATASET_MAP = {
     "re2-tt": "data/RE2/RE2-TT",
     "re3-ob": "data/RE3/RE3-OB",
     "re3-ss": "data/RE3/RE3-SS",
-    "re3-tt": "data/RE3/RE3-TT"
+    "re3-tt": "data/RE3/RE3-TT",
+    "torai-ob": "data/torai-OB",
+    "torai-ss": "data/torai-SS",
+    "torai-tt": "data/torai-TT",
 }
 dataset = DATASET_MAP[args.dataset]
 
@@ -188,7 +195,7 @@ def process(data_path):
     # remove lat-50, only selecte lat-90 
     data = data.loc[:, ~data.columns.str.endswith("_latency-50")]
     
-    if "mm-tt" in data_path:
+    if "mm-tt" in data_path or "torai-TT" in data_path:
         time_col = data["time"]
         data = data.loc[:, data.columns.str.startswith("ts-")]
         data["time"] = time_col
@@ -240,8 +247,47 @@ def process(data_path):
             sli = f"{service}_latency"
         elif "frontend_1" in data:
             sli = "frontend_1"
+    elif "torai-TT" in data_path:
+        sli = "ts-ui-dashboard_latency"
+    elif "torai-OB" in data_path or "torai-SS" in data_path:
+        sli = "frontend_latency"
     else:
         raise ValueError("SLI not implemented")
+
+    # == Multimodal data loading for torai ==
+    if "torai" in args.dataset and args.method == "torai":
+        logts = pd.read_csv(os.path.join(data_dir, "logts.csv"))
+
+        traces_err = pd.DataFrame()
+        traces_lat = pd.DataFrame()
+        try:
+            traces_err = pd.read_csv(os.path.join(data_dir, "tracets_err.csv"))
+            traces_lat = pd.read_csv(os.path.join(data_dir, "tracets_lat.csv"))
+        except FileNotFoundError:
+            pass
+
+        # window logts and trace ts to match metric window
+        logts_length = args.length * 4 // 2 if args.length else 20
+        a = logts[logts["time"] < inject_time].tail(logts_length)
+        b = logts[logts["time"] >= inject_time].head(logts_length)
+        logts = pd.concat([a, b], ignore_index=True)
+
+        if traces_err.shape[0] > 0:
+            a = traces_err[traces_err["time"] < inject_time].tail(logts_length)
+            b = traces_err[traces_err["time"] >= inject_time].head(logts_length)
+            traces_err = pd.concat([a, b], ignore_index=True)
+
+        if traces_lat.shape[0] > 0:
+            a = traces_lat[traces_lat["time"] < inject_time].tail(logts_length)
+            b = traces_lat[traces_lat["time"] >= inject_time].head(logts_length)
+            traces_lat = pd.concat([a, b], ignore_index=True)
+
+        data = {
+            "metric": data.copy(deep=True) if isinstance(data, pd.DataFrame) else data,
+            "logts": logts,
+            "tracets_err": traces_err,
+            "tracets_lat": traces_lat,
+        }
 
     # == PROCESS ==
     func = globals()[args.method]
