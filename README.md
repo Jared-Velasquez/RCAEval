@@ -301,6 +301,15 @@ We would like to express our sincere gratitude to the researchers and developers
 
 ## Citation
 
+```bibtex
+@inproceedings{pham2026torai,
+  title={TORAI: Multi-source Root Cause Analysis for Blind Spots in Microservice Service Call Graph}, 
+  author={Luan Pham and Huong Ha and Xiuzhen Zhang and Hongyu Zhang},
+  year={2026},
+  journal={Proceedings of the ACM on Software Engineering},
+  number={FSE}
+}
+```
 
 ```bibtex
 @inproceedings{pham2025rcaeval,
