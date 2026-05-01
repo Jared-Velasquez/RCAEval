@@ -46,18 +46,18 @@ def tracerca(data, inject_time=None, dataset=None, **kwargs):
     # span_df = pd.read_csv("./data/mm-ob/checkoutservice_delay/1/traces.csv")
     span_df = data
     span_df["methodName"] = span_df["methodName"].fillna(span_df["operationName"])
-    span_df["operation"] = span_df["serviceName"] + "_" + span_df["methodName"]
+    span_df["operation"] = span_df["serviceName"].astype(str) + "_" + span_df["methodName"].astype(str)
 
-    # inject_time = int(inject_time) * 1_000_000  # convert from seconds to microseconds
+    inject_time = int(inject_time) * 1_000_000  # convert from seconds to microseconds
 
     normal_df  = span_df[span_df["startTime"] + span_df["duration"] < inject_time]
     anomal_df  = span_df[span_df["startTime"] + span_df["duration"] >= inject_time]
-    
+
     # 1. TRACE ANOMALY DETECTION
     normal_slo = get_operation_slo(normal_df)
 
-    anomal_df["mean"] = anomal_df["operation"].apply(lambda op: normal_slo[op]["mean"])
-    anomal_df["std"] = anomal_df["operation"].apply(lambda op: normal_slo[op]["std"])
+    anomal_df["mean"] = anomal_df["operation"].apply(lambda op: normal_slo.get(op, {}).get("mean", float("nan")))
+    anomal_df["std"] = anomal_df["operation"].apply(lambda op: normal_slo.get(op, {}).get("std", float("nan")))
     anomal_df["abnormal"] = anomal_df["duration"] / 1_000 >= anomal_df["mean"] + 3 * anomal_df["std"]
 
     # 2. SUSPICIOUS MICROSERVICE SET MINING
