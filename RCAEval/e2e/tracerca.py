@@ -42,7 +42,7 @@ def get_operation_slo(span_df):
 
 
 
-def tracerca(data, inject_time=None, dataset=None, **kwargs):
+def tracerca(data, inject_time=None, dataset=None, caller_discount_alpha=0.0, **kwargs):
     # span_df = pd.read_csv("./data/mm-ob/checkoutservice_delay/1/traces.csv")
     span_df = data
     span_df["methodName"] = span_df["methodName"].fillna(span_df["operationName"])
@@ -80,6 +80,24 @@ def tracerca(data, inject_time=None, dataset=None, **kwargs):
     # ji = 2 *s * c / (s + c)
     for op in operations:
         ji_dict[op] = 2 * support_dict[op] * confidence_dict[op] / (support_dict[op] + confidence_dict[op])
+
+    # Candidate B: Caller-Discount Re-ranking (alpha=0 reproduces baseline exactly)
+    if caller_discount_alpha > 0 and {"spanID", "parentSpanID"}.issubset(span_df.columns):
+        sid2svc = dict(zip(span_df["spanID"], span_df["serviceName"]))
+        callees = {}
+        for psid, csvc in zip(span_df["parentSpanID"], span_df["serviceName"]):
+            psvc = sid2svc.get(psid)
+            if psvc and psvc != csvc:
+                callees.setdefault(psvc, set()).add(csvc)
+        svc_score = {}
+        for op, ji in ji_dict.items():
+            svc = op.split("_", 1)[0]
+            if not np.isnan(ji) and ji > svc_score.get(svc, -np.inf):
+                svc_score[svc] = ji
+        for op in ji_dict:
+            svc = op.split("_", 1)[0]
+            m = max((svc_score.get(c, 0.0) for c in callees.get(svc, ())), default=0.0)
+            ji_dict[op] -= caller_discount_alpha * m
 
     # 3. MICROSERVICE RANKING
     # rank by ji 
